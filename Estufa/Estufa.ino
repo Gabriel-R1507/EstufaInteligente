@@ -49,7 +49,6 @@ void setup() {
   Serial.begin(9600);
   reconectWiFi();
   MQTT.setServer(BROKER_MQTT, BROKER_PORT);   //informa qual broker e porta deve ser conectado
-  MQTT.setCallback(mqtt_callback);            //atribui função de callback (função chamada quando qualquer informação de um dos tópicos subescritos chega)
   
   pinMode(pino_cooler, OUTPUT);
   pinMode(pino_rele1, OUTPUT);
@@ -118,30 +117,6 @@ void loop() {
   
   delay(100);
 }
-
-void mqtt_callback(char* topic, byte* payload, unsigned int length) 
-{
-    String msg;
-    
-    for(int i = 0; i < length; i++) 
-    {
-       char c = (char)payload[i];
-       msg += c;
-    }
-    if (msg.equals("L"))
-    {
-        digitalWrite(D0, LOW);
-        EstadoDeSaida = '1';
-    }
- 
-    //verifica se deve colocar nivel alto de tensão na saída D0:
-    if (msg.equals("D"))
-    {
-        digitalWrite(D0, HIGH);
-        EstadoDeSaida = '0';
-    }
-     
-}
   
 
 void reconnectMQTT() 
@@ -184,11 +159,14 @@ void VerificaConexoesWiFIEMQTT(void)
  
 void EnviaEstadoOutputMQTT(void)
 {
-    if (EstadoDeSaida == '0')
-      MQTT.publish(TOPICO_PUBLISH, "D");
- 
-    if (EstadoDeSaida == '1')
-      MQTT.publish(TOPICO_PUBLISH, "L");
+  int SensorTempTensao=analogRead(pino_termometro);
+  float Tensao = SensorTempTensao*5;
+  Tensao/=1023;
+  float TemperaturaC = Tensao / 0.010;
+
+  MQTT.publish(TOPICO_PUBLISH, analogRead(pino_umidade));
+  
+  MQTT.publish(TOPICO_PUBLISH, TemperaturaC);
       
-    delay(1000);
+  delay(1000);
 }

@@ -37,3 +37,6 @@ Para acionarmos a lampada e a bomba d'agua, utilizamos de um modulo relé para i
 
 O projeto consiste no monitoramento dos dois pinos dos sensores.
 Com essas informaçoes coletadas e mapeadas das entradas analogicas, realizamos algumas comparacoes com os valores escolhidos para sua planta e assim o arduino decide se ira ligar algum atuador correspondete ou desliga-lo.
+
+
+Como protocolo MQTT nosso projeto joga na rede wifi os dados que está lendo dos sensores para que um segundo código à escolha do usuario capture essas informações e exiba em seu computador e/ou celular
